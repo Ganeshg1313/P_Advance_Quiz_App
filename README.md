@@ -3,7 +3,7 @@
 ## While making the App I have learned following things :
 <br>
 1 => How to use localStorage methods<br>
-2 => How to the fetch the questions from the public API(Open Trivia DB)<br>
+2 => How to fetch the questions from the public API(Open Trivia DB)<br>
 3 => Use of JSON methods and the array methods<br>
 4 => How to create a loader<br>
 <br>
