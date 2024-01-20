@@ -3,6 +3,8 @@ const choices = document.getElementsByClassName("choice-text");
 const progressText = document.getElementById('progressText');
 const progressBarFull = document.getElementById('progressBarFull');
 const scoreText = document.getElementById('score');
+const loader = document.getElementById('loader');
+const game = document.getElementById('game');
 
 let currentQuestion = {};
 let acceptingAnswers = false;
@@ -11,44 +13,61 @@ let quesitonCounter = 0;
 let availableQuestions = [];
 
 
-let questions = [
-    {
-        question : "Inside which HTML element do we put the JavaScript 1??",
-        choice1 : "<script>",
-        choice2 : "<javascript>",
-        choice3 : "<js>",
-        choice4 : "<scripting>",
-        answer : 1
-    },
-    {
-        question : "Inside which HTML element do we put the JavaScript 2??",
-        choice1 : "<script>",
-        choice2 : "<javascript>",
-        choice3 : "<js>",
-        choice4 : "<scripting>",
-        answer : 1
-    },
-    {
-        question : "Inside which HTML element do we put the JavaScript 3??",
-        choice1 : "<script>",
-        choice2 : "<javascript>",
-        choice3 : "<js>",
-        choice4 : "<scripting>",
-        answer : 1
-    }
-]
+let questions = [];
+
+// async function fecthQuestions(){
+//     try{
+//         const response = await fetch("questions.json");
+//         const result = await response.json();
+//         for(let item of result) {
+//           questions.push(item);
+//         } 
+//         startGame();
+//     }
+//     catch(e){
+//         console.log(e);
+//     }
+    
+// }
+
+fetch("https://opentdb.com/api.php?amount=10&category=9&difficulty=easy&type=multiple")
+    .then( res => {
+        return res.json();
+    })
+    .then(loadedQuestions => {
+        questions = loadedQuestions.results.map( loadedQuestion => {
+            const formattedQuestion = {
+                question : loadedQuestion.question
+            };
+
+            const answerChoices = [...loadedQuestion.incorrect_answers];
+            formattedQuestion.answer = Math.floor(Math.random() * 3) + 1;
+            answerChoices.splice(formattedQuestion.answer - 1, 0, loadedQuestion.correct_answer);
+
+            answerChoices.forEach((choice, index) => {
+                formattedQuestion["choice" + (index+1)] = choice;
+            })
+            return formattedQuestion;
+        })
+        startGame();
+    })
+    .catch( err => {
+        console.error(err);
+    });
+
 
 //Constants
-
 const CORRECT_BONUS = 10;
 const MAX_QUESTIONS = 3;
 
 startGame = () => {
 
-    quesitonCounter = 0;
-    score = 0;
-    availableQuestions = [...questions];
-    getNewQuestion();
+        quesitonCounter = 0;
+        score = 0;
+        availableQuestions = [...questions];
+        getNewQuestion();
+        game.classList.remove("hidden");
+        loader.classList.add("hidden");
 };
 
 getNewQuestion = () => {
@@ -108,6 +127,3 @@ incrementScore = num => {
     score +=num;
     scoreText.innerText = score;
 }
-
-
-startGame();
